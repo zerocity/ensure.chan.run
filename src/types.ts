@@ -71,6 +71,29 @@ export type TypedMatchHandlers<
   _?: ((error: unknown) => T) | undefined;
 };
 
+/** Helper: extract the error tuple from any object with __faultErrors. */
+type ExtractErrors<T> = T extends {
+  readonly __faultErrors: infer E extends NamedFaultErrorClass<string>[];
+}
+  ? E
+  : [];
+
+/** Any declared function, regardless of args/return type. */
+type AnyDeclaredFn = {
+  readonly __faultErrors: NamedFaultErrorClass<string>[];
+};
+
+/**
+ * Merge error class tuples from multiple declared functions.
+ * Use with composeDeclares() to combine error surfaces.
+ */
+export type MergeErrors<TFns extends AnyDeclaredFn[]> = TFns extends [
+  infer First,
+  ...infer Rest extends AnyDeclaredFn[],
+]
+  ? [...ExtractErrors<First>, ...MergeErrors<Rest>]
+  : [];
+
 /** Handler map for match(). Named keys match fault errors; _ is the fallback. */
 export interface MatchHandlers<T> {
   [nameOrCode: string]: ((error: FaultError) => T) | undefined;

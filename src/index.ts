@@ -4,11 +4,16 @@
  * @module
  */
 
-export { declares } from "./declares";
+export { composeDeclares, declares } from "./declares";
 export { defineError } from "./define-error";
 export { ensure } from "./ensure";
 export { fault } from "./fault";
 export { match } from "./match";
+export {
+  deserializeFaultError,
+  type SerializedFaultError,
+  serializeFaultError,
+} from "./serialize";
 export { tryAsync, trySync } from "./try";
 export type {
   AsyncResult,
@@ -18,6 +23,7 @@ export type {
   FaultErrorClass,
   InferFaultErrors,
   MatchHandlers,
+  MergeErrors,
   NamedFaultError,
   NamedFaultErrorClass,
   SyncResult,

@@ -35,10 +35,10 @@ Check off tasks as they're completed.
 
 ## Phase 4: Advanced
 
-- [ ] `declares()` composition — merging error surfaces from multiple declared functions
-- [ ] Explore `match()` exhaustiveness: warn when not all declared errors are handled
-- [ ] Error serialization / deserialization for cross-boundary use (API responses)
-- [ ] Benchmarks vs plain try/catch overhead
+- [x] `composeDeclares()` — merge error surfaces from multiple declared functions
+- [x] `match()` exhaustiveness — done via 3-arg overload in Phase 2
+- [x] `serializeFaultError` / `deserializeFaultError` — JSON round-trip for API boundaries
+- [x] Benchmarks: ensure ~1.4x, trySync ~1.4x, match ~2x vs baseline (millions of ops/sec)
 
 ---
 

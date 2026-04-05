@@ -1,11 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
+  composeDeclares,
   declares,
   defineError,
+  deserializeFaultError,
   ensure,
   fault,
   type MatchHandlers,
   match,
+  serializeFaultError,
   tryAsync,
   trySync,
 } from "../src/index";
@@ -478,5 +481,121 @@ describe("match", () => {
       });
       expect(result).toBe("matched: slow down");
     }
+  });
+});
+
+// ============================================================================
+// composeDeclares
+// ============================================================================
+
+describe("composeDeclares", () => {
+  it("merges error surfaces from multiple declared functions", async () => {
+    const { scenarios } = given();
+    const getUser = declares(
+      [scenarios.errors.notFound],
+      async (id: string) => ({ id }),
+    );
+    const getDb = declares([scenarios.errors.db], async () => ({
+      connected: true,
+    }));
+
+    const getUserWithDb = composeDeclares(
+      [getUser, getDb],
+      async (id: string) => {
+        const db = await getDb();
+        const user = await getUser(id);
+        return { ...user, ...db };
+      },
+    );
+
+    const result = await getUserWithDb("123");
+    expect(result).toEqual({ id: "123", connected: true });
+  });
+
+  it("composed function works with tryAsync", async () => {
+    const { scenarios } = given();
+    const fn1 = declares([scenarios.errors.notFound], (x: string) => x);
+    const fn2 = declares([scenarios.errors.db], (x: string) => x);
+
+    const composed = composeDeclares([fn1, fn2], (x: string) => {
+      fn1(x);
+      return fn2(x);
+    });
+
+    const result = trySync(composed, "test");
+    expect(result).toEqual({ ok: true, data: "test" });
+  });
+});
+
+// ============================================================================
+// serialize / deserialize
+// ============================================================================
+
+describe("serializeFaultError", () => {
+  it("serializes a fault error to plain object", () => {
+    const { scenarios } = given();
+    const err = new scenarios.errors.notFound("User not found");
+    const json = serializeFaultError(err);
+
+    expect(json).toEqual({
+      name: "NotFoundError",
+      code: "NotFoundError",
+      message: "User not found",
+    });
+  });
+
+  it("includes cause message when present", () => {
+    const { scenarios } = given();
+    const err = new scenarios.errors.notFound("wrapped", {
+      cause: scenarios.causes.root,
+    });
+    const json = serializeFaultError(err);
+
+    expect(json.cause).toBe("root cause");
+  });
+
+  it("omits cause when not an Error", () => {
+    const { scenarios } = given();
+    const err = new scenarios.errors.notFound("test");
+    const json = serializeFaultError(err);
+
+    expect(json.cause).toBeUndefined();
+  });
+});
+
+describe("deserializeFaultError", () => {
+  it("reconstructs a fault error from serialized data", () => {
+    const { scenarios } = given();
+    const registry = { NotFoundError: scenarios.errors.notFound };
+    const err = deserializeFaultError(
+      { name: "NotFoundError", code: "NotFoundError", message: "gone" },
+      registry,
+    );
+
+    expect(err).toBeInstanceOf(scenarios.errors.notFound);
+    expect(err.message).toBe("gone");
+  });
+
+  it("returns plain Error when name not in registry", () => {
+    const err = deserializeFaultError(
+      { name: "UnknownError", code: "UNKNOWN", message: "hmm" },
+      {},
+    );
+
+    expect(err).toBeInstanceOf(Error);
+    expect(err.name).toBe("UnknownError");
+    expect(err.message).toBe("hmm");
+  });
+
+  it("round-trips: serialize → deserialize", () => {
+    const { scenarios } = given();
+    const original = new scenarios.errors.notFound("round trip");
+    const json = serializeFaultError(original);
+    const restored = deserializeFaultError(json, {
+      NotFoundError: scenarios.errors.notFound,
+    });
+
+    expect(restored).toBeInstanceOf(scenarios.errors.notFound);
+    expect(restored.message).toBe("round trip");
   });
 });
