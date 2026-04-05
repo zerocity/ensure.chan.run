@@ -22,8 +22,8 @@ Check off tasks as they're completed.
 - [x] `match()` guards with `isFault` — only dispatches on fault errors, not plain Error
 - [x] `match()` name-vs-code priority (name wins, tested)
 - [x] Inline fault code caching correctness (tested)
-- [ ] `match()` handler type inference from declared errors (exhaustiveness checking)
-- [ ] Type-level tests (e.g. `expectTypeOf` for declares → tryAsync narrowing)
+- [x] `match()` exhaustiveness: 3-arg overload requires handler for every declared error
+- [x] Type-level tests: 13 tests covering defineError, declares, trySync/tryAsync narrowing, match exhaustiveness, end-to-end flow
 
 ## Phase 3: Polish
 

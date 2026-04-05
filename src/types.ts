@@ -5,10 +5,25 @@ export interface FaultError extends Error {
   readonly isFault: true;
 }
 
-/** Constructor for a FaultError class. */
+/** A fault error whose name is known at the type level. */
+export interface NamedFaultError<N extends string> extends FaultError {
+  readonly name: N;
+}
+
+/** Constructor for a FaultError class (untyped name). */
 export interface FaultErrorClass {
   new (message?: string, options?: { cause?: unknown }): FaultError;
   readonly prototype: FaultError;
+}
+
+/**
+ * Constructor for a FaultError class with a known name.
+ * Does not extend FaultErrorClass to prevent InstanceType from
+ * picking the wider FaultError construct signature.
+ */
+export interface NamedFaultErrorClass<N extends string> {
+  new (message?: string, options?: { cause?: unknown }): NamedFaultError<N>;
+  readonly prototype: NamedFaultError<N>;
 }
 
 /** Result of trySync — error type narrows when wrapping a declared function. */
@@ -25,7 +40,7 @@ export type AsyncResult<T, E = unknown> =
 export type DeclaredFn<
   TArgs extends unknown[],
   TReturn,
-  TErrors extends FaultErrorClass[],
+  TErrors extends NamedFaultErrorClass<string>[],
 > = ((...args: TArgs) => TReturn) & {
   readonly __faultErrors: TErrors;
 };
@@ -34,9 +49,27 @@ export type DeclaredFn<
  * Extract the error union from a declared function's error classes.
  * Maps [typeof NotFoundError, typeof DbError] → NotFoundError | DbError.
  */
-export type InferFaultErrors<TErrors extends FaultErrorClass[]> = InstanceType<
-  TErrors[number]
->;
+export type InferFaultErrors<TErrors extends NamedFaultErrorClass<string>[]> =
+  InstanceType<TErrors[number]>;
+
+/** Extract the name string literals from a tuple of error classes. */
+export type ErrorNames<TErrors extends NamedFaultErrorClass<string>[]> =
+  TErrors[number] extends NamedFaultErrorClass<infer N> ? N : never;
+
+/**
+ * Typed handler map for match() — requires a handler for every declared error name.
+ * Use with errors from declares() for exhaustiveness checking.
+ */
+export type TypedMatchHandlers<
+  T,
+  TErrors extends NamedFaultErrorClass<string>[],
+> = {
+  [K in ErrorNames<TErrors>]: (
+    error: InstanceType<Extract<TErrors[number], NamedFaultErrorClass<K>>>,
+  ) => T;
+} & {
+  _?: ((error: unknown) => T) | undefined;
+};
 
 /** Handler map for match(). Named keys match fault errors; _ is the fallback. */
 export interface MatchHandlers<T> {

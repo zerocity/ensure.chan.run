@@ -1,4 +1,4 @@
-import type { DeclaredFn, FaultErrorClass } from "./types";
+import type { DeclaredFn, NamedFaultErrorClass } from "./types";
 
 /**
  * Annotate a function's error surface — purely type-level, zero runtime cost.
@@ -13,7 +13,7 @@ import type { DeclaredFn, FaultErrorClass } from "./types";
 export function declares<
   TArgs extends unknown[],
   TReturn,
-  TErrors extends FaultErrorClass[],
+  TErrors extends NamedFaultErrorClass<string>[],
 >(
   _errorClasses: [...TErrors],
   fn: (...args: TArgs) => TReturn,

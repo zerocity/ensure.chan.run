@@ -13,9 +13,13 @@ export { tryAsync, trySync } from "./try";
 export type {
   AsyncResult,
   DeclaredFn,
+  ErrorNames,
   FaultError,
   FaultErrorClass,
   InferFaultErrors,
   MatchHandlers,
+  NamedFaultError,
+  NamedFaultErrorClass,
   SyncResult,
+  TypedMatchHandlers,
 } from "./types";

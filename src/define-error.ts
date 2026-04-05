@@ -1,4 +1,4 @@
-import type { FaultError, FaultErrorClass } from "./types";
+import type { FaultError, NamedFaultErrorClass } from "./types";
 
 /** Any class that extends Error and can be subclassed. */
 type ErrorBaseClass = abstract new (
@@ -31,10 +31,10 @@ interface ErrorWithCaptureStackTrace {
  * const ValidationError = defineError("ValidationError", { code: "VALIDATION" });
  * ```
  */
-export function defineError(
-  name: string,
+export function defineError<N extends string>(
+  name: N,
   options?: DefineErrorOptions,
-): FaultErrorClass {
+): NamedFaultErrorClass<N> {
   const code = options?.code ?? name;
   const Base = options?.base ?? Error;
 
@@ -58,5 +58,5 @@ export function defineError(
 
   Object.defineProperty(ErrorClass, "name", { value: name });
 
-  return ErrorClass as unknown as FaultErrorClass;
+  return ErrorClass as unknown as NamedFaultErrorClass<N>;
 }
