@@ -52,6 +52,27 @@ export const fetchJson = declares([ApiError, TimeoutError], async (url: string) 
 });
 ```
 
+### With try/catch
+
+The same wrapper using try/catch instead of tryAsync — still uses `match` to avoid instanceof chains:
+
+```ts
+export const fetchJson = declares([ApiError, TimeoutError], async (url: string) => {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      fault(ApiError, `HTTP ${res.status}: ${res.statusText}`);
+    }
+    return await res.json();
+  } catch (e) {
+    match(e, {
+      AbortError: (err) => fault(TimeoutError, `Request to ${url} timed out`, { cause: err }),
+      _: (err) => fault(ApiError, `Request to ${url} failed`, { cause: err }),
+    });
+  }
+});
+```
+
 ## Why wrap?
 
 - **Typed errors propagate** — callers know exactly what can fail
