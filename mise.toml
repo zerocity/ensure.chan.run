@@ -3,6 +3,7 @@ node = "22"
 pnpm = "latest"
 "npm:@biomejs/biome" = "latest"
 "npm:@mariozechner/pi-coding-agent" = "latest"
+fnox = "latest"
 
 [tasks.build]
 description = "Build the project"
