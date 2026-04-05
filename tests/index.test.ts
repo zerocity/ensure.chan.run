@@ -4,7 +4,6 @@ import {
   defineError,
   ensure,
   fault,
-  expect as faultExpect,
   type MatchHandlers,
   match,
   tryAsync,
@@ -57,7 +56,7 @@ function given() {
       value: T,
       errorClass: ReturnType<typeof defineError>,
       msg: string,
-    ) => faultExpect(value, errorClass, msg),
+    ) => ensure(value, errorClass, msg),
     trySyncFn: <T>(fn: () => T) => trySync(fn),
     tryAsyncFn: <T>(fn: () => Promise<T>) => tryAsync(fn),
     matchError: <T>(error: unknown, handlers: MatchHandlers<T>) =>
@@ -190,10 +189,10 @@ describe("fault", () => {
 });
 
 // ============================================================================
-// expect / ensure
+// ensure
 // ============================================================================
 
-describe("expect", () => {
+describe("ensure", () => {
   it("returns value when non-null", () => {
     const { scenarios, when } = given();
     const result = when.assertValue(
@@ -220,7 +219,7 @@ describe("expect", () => {
   it("throws on null", () => {
     const { scenarios } = given();
     expect(() =>
-      faultExpect(
+      ensure(
         scenarios.values.missing.null,
         scenarios.errors.notFound,
         "was null",
@@ -231,7 +230,7 @@ describe("expect", () => {
   it("throws on undefined", () => {
     const { scenarios } = given();
     expect(() =>
-      faultExpect(
+      ensure(
         scenarios.values.missing.undefined,
         scenarios.errors.notFound,
         "was undef",
@@ -242,7 +241,7 @@ describe("expect", () => {
   it("thrown error is an instance of the given class", () => {
     const { scenarios } = given();
     try {
-      faultExpect(null, scenarios.errors.notFound, "test");
+      ensure(null, scenarios.errors.notFound, "test");
     } catch (e) {
       expect(e).toBeInstanceOf(scenarios.errors.notFound);
     }
@@ -251,18 +250,12 @@ describe("expect", () => {
   it("supports cause option", () => {
     const { scenarios, then } = given();
     try {
-      faultExpect(null, scenarios.errors.notFound, "test", {
+      ensure(null, scenarios.errors.notFound, "test", {
         cause: scenarios.causes.root,
       });
     } catch (e) {
       expect(then.cause(e as Error)).toBe(scenarios.causes.root);
     }
-  });
-});
-
-describe("ensure (alias for expect)", () => {
-  it("is the same function as expect", () => {
-    expect(ensure).toBe(faultExpect);
   });
 });
 

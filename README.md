@@ -10,44 +10,92 @@ pnpm add @chan.run/fault
 
 JavaScript error handling is broken by default. Functions throw, but callers have no idea what. `@chan.run/fault` makes error contracts explicit — with zero ceremony.
 
+## Quick Start
+
 ```ts
-import { defineError, declares, fault, expect, tryAsync, match } from "@chan.run/fault";
+import { defineError, ensure, tryAsync, match } from "@chan.run/fault";
 
-// Define typed errors
 const NotFoundError = defineError("NotFoundError");
-const DbError = defineError("DbError");
 
-// Annotate what a function can throw
-const getUser = declares([NotFoundError, DbError], async (id: string) => {
-  const row = await db.users.findById(id);
-  return expect(row, NotFoundError, `No user: ${id}`);
-});
+// Guard a nullable value — throws NotFoundError if null/undefined
+const user = ensure(db.find(id), NotFoundError, `No user: ${id}`);
 
-// Safe execution — error type flows through
-const result = await tryAsync(getUser, id);
+// Safe async execution — never rejects
+const result = await tryAsync(() => fetchUser(id));
 
 if (!result.ok) {
-  // TypeScript knows: result.error is NotFoundError | DbError
-  match(result.error, [NotFoundError, DbError], {
+  match(result.error, {
     NotFoundError: (err) => respond(404, err.message),
-    DbError: (err) => respond(503, "DB unavailable"),
+    _: (err) => { throw err },
   });
 }
 ```
 
-## API
+## Example
+
+A complete route handler showing every part of the library working together:
+
+```ts
+import { defineError, ensure, declares, tryAsync, match } from "@chan.run/fault";
+
+// Define typed errors — each carries its name in the type system
+const UserNotFoundError = defineError("UserNotFoundError");
+const DbError = defineError("DbError");
+
+// Declare what a function can throw — purely type-level, zero runtime cost
+const getUser = declares([UserNotFoundError, DbError], async (id: string) => {
+  const row = await db.users.findById(id);
+  return ensure(row, UserNotFoundError, `No user: ${id}`);
+});
+
+// Safe execution — error type flows through automatically
+export async function handleGetUser(req: Request): Promise<Response> {
+  const result = await tryAsync(getUser, req.params.id);
+
+  if (result.ok) {
+    return Response.json(result.data);
+  }
+
+  // TypeScript enforces you handle both error types
+  return match(result.error, [UserNotFoundError, DbError], {
+    UserNotFoundError: (err) => Response.json({ error: err.message }, { status: 404 }),
+    DbError: (err) => Response.json({ error: "Service unavailable" }, { status: 503 }),
+  });
+}
+```
+
+## Basic API
+
+These work standalone — no type annotations needed.
+
+### `ensure(value, ErrorClass, message)`
+
+Assert that a value is not `null` or `undefined`. Returns the narrowed value, or throws.
+
+```ts
+import { ensure, defineError } from "@chan.run/fault";
+
+const NotFound = defineError("NotFound");
+
+const user = ensure(db.find(id), NotFound, `No user: ${id}`);
+// user is guaranteed non-null here — TypeScript knows it
+```
+
+Falsy values like `0`, `""`, and `false` pass through — only `null` and `undefined` throw.
 
 ### `defineError(name, options?)`
 
-Define a reusable typed error class. The name string literal is preserved in the type system.
+Create a reusable typed error class. Every instance has `name`, `code`, `isFault: true`, and full `Error` compatibility.
 
 ```ts
+import { defineError } from "@chan.run/fault";
+
 const NotFoundError = defineError("NotFoundError");
 const ValidationError = defineError("ValidationError", { code: "VALIDATION" });
 
 const err = new NotFoundError("User not found");
-err.name;    // "NotFoundError" (literal type)
-err.code;    // "NotFoundError" (or custom code)
+err.name;    // "NotFoundError"
+err.code;    // "NotFoundError"
 err.isFault; // true
 ```
 
@@ -55,74 +103,60 @@ Options: `{ code?: string, base?: typeof Error }`
 
 ### `fault(target, message, options?)`
 
-Throw a typed error. Target is a class from `defineError` or an inline string code.
+Throw a typed error with cause chaining. Use `fault` when you're catching an error and rethrowing it as a typed fault — this is its primary purpose. For null-guards, use `ensure` instead.
 
 ```ts
-// From a defined class
-fault(NotFoundError, "User not found");
-fault(ValidationError, `Invalid: ${val}`, { cause: originalError });
+import { fault, defineError } from "@chan.run/fault";
 
-// Inline — creates and caches a class keyed by the string
+const ApiError = defineError("ApiError");
+
+// Wrap a caught error with a typed fault + cause chain
+try {
+  await thirdPartyApi();
+} catch (e) {
+  fault(ApiError, "upstream request failed", { cause: e });
+}
+
+// Quick inline error — no defineError needed
 fault("RATE_LIMITED", "Too many requests");
 ```
 
-### `expect(value, ErrorClass, message, options?)`
+**When to use what:**
 
-Assert non-null/undefined. Returns the narrowed value or throws. Also exported as `ensure` to avoid collision with test framework `expect`.
-
-```ts
-const user = expect(db.find(id), NotFoundError, `No user: ${id}`);
-const token = expect(req.headers.authorization, AuthError, "Missing token");
-
-// Or use the alias:
-import { ensure } from "@chan.run/fault";
-const user = ensure(db.find(id), NotFoundError, `No user: ${id}`);
-```
+| Situation | Use |
+|---|---|
+| Value might be null/undefined | `ensure(val, Err, msg)` |
+| Catch + rethrow with typed error | `fault(Err, msg, { cause: e })` |
+| Quick one-off, no class needed | `fault("CODE", msg)` |
+| Everything else | `throw new MyError(msg)` |
 
 ### `trySync(fn)` / `tryAsync(fn)`
 
-Run code safely — always returns, never throws/rejects. Returns a discriminated union.
+Run code safely. Always returns — never throws or rejects. The result is a discriminated union that forces you to handle both cases.
 
 ```ts
+import { trySync, tryAsync } from "@chan.run/fault";
+
+// Sync
 const result = trySync(() => JSON.parse(raw));
 
 if (result.ok) {
   console.log(result.data);
 } else {
-  console.error(result.error); // unknown
+  console.error(result.error);
 }
+
+// Async
+const userResult = await tryAsync(() => fetchUser(id));
 ```
 
-Pass a declared function directly to get typed errors:
+### `match(error, handlers)`
+
+Match an error by name or code. The `_` key is the fallback. Only fault-created errors are matched — plain `Error` objects fall through to `_`.
 
 ```ts
-const safeParse = declares([ParseError], (raw: string) => JSON.parse(raw));
-const result = trySync(safeParse, raw);
-// result.error is ParseError, not unknown
-```
+import { match } from "@chan.run/fault";
 
-### `declares(errorClasses, fn)`
-
-Annotate a function's error surface. Purely type-level — zero runtime cost.
-
-```ts
-const getUser = declares([NotFoundError, DbError], async (id: string) => {
-  const row = await db.users.findById(id);
-  return expect(row, NotFoundError, `No user: ${id}`);
-});
-
-// Error types flow through trySync/tryAsync
-const result = await tryAsync(getUser, id);
-if (!result.ok) {
-  result.error; // NotFoundError | DbError
-}
-```
-
-### `match(error, handlers)` — untyped
-
-Match an error by name or code with a handler map. The `_` key is the fallback.
-
-```ts
 match(error, {
   NotFoundError: (err) => respond(404, err.message),
   RATE_LIMITED: (err) => respond(429, "Slow down"),
@@ -130,60 +164,79 @@ match(error, {
 });
 ```
 
-Only fault-created errors (with `isFault === true`) are matched by name/code. Plain `Error` objects fall through to `_`.
+## Typed Error Flow
+
+The advanced story. Adds compile-time safety to the basic API.
+
+### `declares(errorClasses, fn)`
+
+Annotate a function's error surface. Zero runtime cost — purely type-level.
+
+```ts
+import { declares, defineError, ensure } from "@chan.run/fault";
+
+const NotFoundError = defineError("NotFoundError");
+const DbError = defineError("DbError");
+
+const getUser = declares([NotFoundError, DbError], async (id: string) => {
+  const row = await db.users.findById(id);
+  return ensure(row, NotFoundError, `No user: ${id}`);
+});
+```
+
+### `tryAsync(fn, ...args)` — direct pass
+
+Pass a declared function directly (not wrapped in a lambda) to get typed errors:
+
+```ts
+const result = await tryAsync(getUser, "user-123");
+
+if (!result.ok) {
+  result.error; // NotFoundError | DbError — not unknown
+}
+```
+
+Works with `trySync` too:
+
+```ts
+const safeParse = declares([ParseError], (raw: string) => JSON.parse(raw));
+const result = trySync(safeParse, raw);
+// result.error is ParseError
+```
 
 ### `match(error, errorClasses, handlers)` — exhaustive
 
-Pass the error classes array for compile-time exhaustiveness checking. TypeScript will error if you miss a handler.
+Pass the error classes array for compile-time exhaustiveness. TypeScript errors if you miss a handler.
 
 ```ts
 match(result.error, [NotFoundError, DbError], {
   NotFoundError: (err) => respond(404, err.message),
   DbError: (err) => respond(503, "DB unavailable"),
-  // TypeScript errors if you remove either handler ↑
+  // Remove either handler ↑ and TypeScript complains
 });
 ```
 
-Each handler receives the error narrowed to its specific type — `err.name` is a string literal.
+Each handler receives the error narrowed to its specific type — `err.name` is a string literal, not `string`.
 
 ## Patterns
 
-### Module-scoped error catalog
+### Error catalog
 
 ```ts
-// errors.ts
-export const UserNotFoundError = defineError("UserNotFoundError", { code: "USER_NOT_FOUND" });
+// errors.ts — define once, import everywhere
+export const UserNotFoundError = defineError("UserNotFoundError");
 export const InvalidInputError = defineError("InvalidInputError", { code: "INVALID_INPUT" });
-export const UnauthorizedError = defineError("UnauthorizedError", { code: "UNAUTHORIZED" });
-```
-
-### Declared function with typed catch
-
-```ts
-const getUser = declares([UserNotFoundError, DbError], async (id: string) => {
-  const row = await db.users.findById(id);
-  return expect(row, UserNotFoundError, `No user: ${id}`);
-});
-
-// Route handler
-const result = await tryAsync(getUser, req.params.id);
-
-if (!result.ok) {
-  return match(result.error, [UserNotFoundError, DbError], {
-    UserNotFoundError: () => res.status(404).json({ error: "Not found" }),
-    DbError: () => res.status(503).json({ error: "DB unavailable" }),
-  });
-}
-
-res.json(result.data);
+export const UnauthorizedError = defineError("UnauthorizedError");
 ```
 
 ### Wrapping third-party code
 
+`fault` shines here — catch an untyped error and rethrow it as a typed fault with the original as `cause`:
+
 ```ts
-const parseConfig = declares([ValidationError], (raw: string) => {
+const parseConfig = declares([ConfigError], (raw: string) => {
   const result = trySync(() => JSON.parse(raw));
-  if (!result.ok) fault(ValidationError, "Config is not valid JSON", { cause: result.error });
+  if (!result.ok) fault(ConfigError, "Invalid JSON", { cause: result.error });
   return result.data as Config;
 });
 ```

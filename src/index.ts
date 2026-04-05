@@ -6,7 +6,7 @@
 
 export { declares } from "./declares";
 export { defineError } from "./define-error";
-export { expect, expect as ensure } from "./expect";
+export { ensure } from "./ensure";
 export { fault } from "./fault";
 export { match } from "./match";
 export { tryAsync, trySync } from "./try";

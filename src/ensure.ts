@@ -4,10 +4,10 @@ import type { FaultErrorClass } from "./types";
  * Assert non-null/undefined. Returns the narrowed value or throws.
  *
  * ```ts
- * const user = expect(db.find(id), NotFoundError, `No user: ${id}`);
+ * const user = ensure(db.find(id), NotFoundError, `No user: ${id}`);
  * ```
  */
-export function expect<T>(
+export function ensure<T>(
   value: T,
   ErrorClass: FaultErrorClass,
   message: string,

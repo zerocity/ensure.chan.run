@@ -6,7 +6,7 @@ import type { DeclaredFn, NamedFaultErrorClass } from "./types";
  * ```ts
  * const getUser = declares([NotFoundError, DatabaseError], async (id: string) => {
  *   const row = await db.users.findById(id);
- *   return expect(row, NotFoundError, `No user: ${id}`);
+ *   return ensure(row, NotFoundError, `No user: ${id}`);
  * });
  * ```
  */

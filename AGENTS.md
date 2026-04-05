@@ -14,7 +14,7 @@ This is a **TypeScript library** distributed on npm as `@chan.run/fault`. It pro
 |---------------|-------------------|----------------------------------------------|
 | `defineError` | `src/define-error.ts` | Define a reusable typed error class      |
 | `fault()`     | `src/fault.ts`    | Throw a typed error — inline or from a class |
-| `expect()`    | `src/expect.ts`   | Assert non-null/undefined, throw if missing  |
+| `ensure()`    | `src/ensure.ts`   | Assert non-null/undefined, throw if missing  |
 | `trySync()`   | `src/try.ts`      | Run sync code, return `{ ok, data/error }`   |
 | `tryAsync()`  | `src/try.ts`      | Run async code, return `{ ok, data/error }`  |
 | `declares()`  | `src/declares.ts` | Annotate a function's error surface          |
