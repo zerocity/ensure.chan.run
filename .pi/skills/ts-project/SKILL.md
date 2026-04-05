@@ -60,14 +60,12 @@ fault/
 - Dev dependencies: vitest, tsdown, typescript, biome
 - Add dependencies only with explicit justification
 
-## Pre-Commit Checklist
+## Pre-Commit Gate
+
+Run before every commit — do not commit until this passes:
 
 ```sh
-pnpm run format:check   # biome formatting
-pnpm run lint            # biome linting
-pnpm run typecheck       # tsc --noEmit
-pnpm run test            # vitest run
-pnpm run build           # tsdown (ESM + CJS)
+mise run check
 ```
 
-Or just: `mise run check`
+This runs: format:check → lint → typecheck → test → build.

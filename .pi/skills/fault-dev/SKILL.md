@@ -29,7 +29,8 @@ Use this skill when working on any @chan.run/fault implementation task.
 4. **Verify** — `mise run check`
 5. **Review** — load `/skill:review code` on changed files
 6. **Fix review findings** — if any, fix and re-verify
-7. **Commit** — use conventional commits, always ask user first
+7. **Gate** — run `mise run check` — do not commit until it passes
+8. **Commit** — use conventional commits, always ask user first
 
 ### Verification Gate
 

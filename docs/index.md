@@ -42,7 +42,8 @@ if (!result.ok) {
 
 | Export        | Purpose                                      |
 |---------------|----------------------------------------------|
-| `ensure`      | Assert non-null/undefined, throw if missing  |
+| `ensure`      | Assert non-null/undefined — class, string, or class+message |
+| `EnsureError`  | Built-in error for string-form ensure        |
 | `defineError` | Define a reusable typed error class          |
 | `fault()`     | Throw a typed error with cause chaining      |
 | `trySync()`   | Run sync code, return `{ ok, data/error }`   |

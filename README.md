@@ -68,7 +68,7 @@ export async function handleGetUser(req: Request): Promise<Response> {
 
 These work standalone — no type annotations needed.
 
-### `ensure(value, ErrorClass, message, options?)`
+### `ensure(value, errorOrMessage, message?, options?)`
 
 Assert that a value is not `null` or `undefined`. Returns the narrowed value, or throws.
 
@@ -77,8 +77,23 @@ import { ensure, defineError } from "@chan.run/fault";
 
 const NotFound = defineError("NotFound");
 
+// Full — typed error class + message
 const user = ensure(db.find(id), NotFound, `No user: ${id}`);
-// user is guaranteed non-null here — TypeScript knows it
+
+// Class only — message defaults to error name
+const config = ensure(loadConfig(), ConfigError);
+
+// String only — throws EnsureError with your message
+const token = ensure(headers.auth, "Missing auth token");
+```
+
+The string form throws `EnsureError` — match on it to remap to a concrete typed error:
+
+```ts
+match(err, {
+  EnsureError: (e) => fault(AuthError, e.message, { cause: e }),
+  _: (e) => { throw e },
+});
 ```
 
 Falsy values like `0`, `""`, and `false` pass through — only `null` and `undefined` throw.
@@ -125,7 +140,7 @@ fault("RATE_LIMITED", "Too many requests");
 
 | Situation | Use |
 |---|---|
-| Value might be null/undefined | `ensure(val, Err, msg)` |
+| Value might be null/undefined | `ensure(val, Err)` or `ensure(val, "msg")` |
 | Catch + rethrow with typed error | `fault(Err, msg, { cause: e })` |
 | Quick one-off, no class needed | `fault("CODE", msg)` |
 | Everything else | `throw new MyError(msg)` |
