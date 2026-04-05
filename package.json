@@ -28,10 +28,10 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1",
-    "tsdown": "^0",
-    "typescript": "^5",
-    "vitest": "^3"
+    "@biomejs/biome": "2.4.10",
+    "tsdown": "0.21.7",
+    "typescript": "6.0.2",
+    "vitest": "4.1.2"
   },
   "engines": {
     "node": ">=18"
