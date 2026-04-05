@@ -4,15 +4,15 @@
  * @module
  */
 
-export { composeDeclares, declares } from "./declares";
+export { combines, declares } from "./declares";
 export { defineError } from "./define-error";
 export { ensure } from "./ensure";
 export { fault } from "./fault";
 export { match } from "./match";
 export {
-  deserializeFaultError,
-  type SerializedFaultError,
-  serializeFaultError,
+  detoJSON,
+  type FaultErrorJSON,
+  toJSON,
 } from "./serialize";
 export { tryAsync, trySync } from "./try";
 export type {

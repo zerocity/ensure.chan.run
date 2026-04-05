@@ -29,7 +29,7 @@ export function declares<
  * const getUser = declares([NotFoundError, DbError], ...);
  * const getOrder = declares([OrderError, DbError], ...);
  *
- * const getUserOrder = composeDeclares(
+ * const getUserOrder = combines(
  *   [getUser, getOrder],
  *   async (userId: string, orderId: string) => {
  *     const user = await getUser(userId);
@@ -40,7 +40,7 @@ export function declares<
  * // getUserOrder can throw NotFoundError | DbError | OrderError
  * ```
  */
-export function composeDeclares<
+export function combines<
   TArgs extends unknown[],
   TReturn,
   TFns extends { readonly __faultErrors: NamedFaultErrorClass<string>[] }[],

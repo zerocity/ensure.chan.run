@@ -49,6 +49,9 @@ if (!result.ok) {
 | `tryAsync()`  | Run async code, return `{ ok, data/error }`  |
 | `declares()`  | Annotate a function's error surface          |
 | `match()`     | Handle errors by type with a handler map     |
+| `combines()`  | Compose error surfaces from declared functions |
+| `toJSON()`    | Serialize a fault error for JSON transport   |
+| `fromJSON()`  | Reconstruct a fault error from JSON          |
 
 See the full [API reference](/docs/products/fault/api) and [examples](/docs/products/fault/examples/route-handler).
 

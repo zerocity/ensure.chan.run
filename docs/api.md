@@ -170,6 +170,43 @@ match(result.error, [NotFoundError, DbError], {
 
 Each handler receives the error narrowed to its specific type — `err.name` is a string literal, not `string`.
 
+### `combines(sources, fn)` — compose error surfaces
+
+When a function calls multiple declared functions, combine their error surfaces into one:
+
+```ts
+import { combines, declares } from "@chan.run/fault";
+
+const getUser = declares([NotFoundError, DbError], ...);
+const getOrder = declares([OrderError, DbError], ...);
+
+const getUserOrder = combines([getUser, getOrder], async (userId, orderId) => {
+  const user = await getUser(userId);
+  const order = await getOrder(orderId);
+  return { user, order };
+});
+// getUserOrder can throw NotFoundError | DbError | OrderError
+```
+
+### `toJSON(error)` / `fromJSON(data, registry)`
+
+Serialize fault errors for JSON transport (API responses, logs). Reconstruct on the other side with a registry.
+
+```ts
+import { toJSON, fromJSON } from "@chan.run/fault";
+
+// Serialize
+const json = toJSON(err);
+// { name: "NotFoundError", code: "NotFoundError", message: "No user: 123" }
+
+// Deserialize — registry maps names to error classes
+const registry = { NotFoundError, DbError };
+const err = fromJSON(json, registry);
+// err instanceof NotFoundError === true
+```
+
+Returns a plain `Error` if the name isn't in the registry.
+
 ## Types
 
 All types are exported for advanced use:
@@ -187,3 +224,5 @@ All types are exported for advanced use:
 | `ErrorNames<TErrors>` | Extract name string literals from class tuple |
 | `MatchHandlers<T>` | Handler map for untyped `match()` |
 | `TypedMatchHandlers<T, TErrors>` | Handler map for exhaustive `match()` |
+| `MergeErrors<TFns>` | Merge error tuples from declared functions |
+| `FaultErrorJSON` | Serialized representation for JSON transport |

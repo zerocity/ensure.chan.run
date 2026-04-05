@@ -85,7 +85,7 @@ type AnyDeclaredFn = {
 
 /**
  * Merge error class tuples from multiple declared functions.
- * Use with composeDeclares() to combine error surfaces.
+ * Use with combines() to combine error surfaces.
  */
 export type MergeErrors<TFns extends AnyDeclaredFn[]> = TFns extends [
   infer First,

@@ -1,7 +1,7 @@
 import type { FaultError, FaultErrorClass } from "./types";
 
 /** Serialized representation of a FaultError for JSON transport. */
-export interface SerializedFaultError {
+export interface FaultErrorJSON {
   name: string;
   code: string;
   message: string;
@@ -13,12 +13,12 @@ export interface SerializedFaultError {
  *
  * ```ts
  * const err = new NotFoundError("User not found");
- * const json = serializeFaultError(err);
+ * const json = toJSON(err);
  * // { name: "NotFoundError", code: "NotFoundError", message: "User not found" }
  * ```
  */
-export function serializeFaultError(error: FaultError): SerializedFaultError {
-  const serialized: SerializedFaultError = {
+export function toJSON(error: FaultError): FaultErrorJSON {
+  const serialized: FaultErrorJSON = {
     name: error.name,
     code: error.code,
     message: error.message,
@@ -35,14 +35,14 @@ export function serializeFaultError(error: FaultError): SerializedFaultError {
  *
  * ```ts
  * const registry = { NotFoundError, DbError };
- * const err = deserializeFaultError(json, registry);
+ * const err = detoJSON(json, registry);
  * // err instanceof NotFoundError === true
  * ```
  *
  * Returns a generic Error if the name isn't in the registry.
  */
-export function deserializeFaultError(
-  data: SerializedFaultError,
+export function detoJSON(
+  data: FaultErrorJSON,
   registry: Record<string, FaultErrorClass>,
 ): FaultError | Error {
   const ErrorClass = registry[data.name];
