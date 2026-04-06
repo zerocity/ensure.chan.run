@@ -14,7 +14,7 @@ type TypedMatchHandlers<T, TErrors> = { [K in ErrorNames<TErrors>]: (error: Inst
 };
 ```
 
-Defined in: [src/types.ts:56](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/types.ts#L56)
+Defined in: [src/types.ts:56](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/types.ts#L56)
 
 Typed handler map for match() — requires a handler for every declared error name.
 Use with errors from declares() for exhaustiveness checking.

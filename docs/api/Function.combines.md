@@ -9,7 +9,7 @@ kind: function
 function combines<TArgs, TReturn, TFns>(_sources, fn): DeclaredFn<TArgs, TReturn, MergeErrors<TFns>>;
 ```
 
-Defined in: [src/declares.ts:123](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/declares.ts#L123)
+Defined in: [src/declares.ts:123](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/declares.ts#L123)
 
 Compose error surfaces from multiple declared functions into one.
 Use when a function calls several declared functions and can throw any of their errors.

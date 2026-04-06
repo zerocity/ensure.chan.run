@@ -9,7 +9,7 @@ kind: function
 function fromJSON(data, registry): Error;
 ```
 
-Defined in: [src/serialize.ts:115](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/serialize.ts#L115)
+Defined in: [src/serialize.ts:115](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/serialize.ts#L115)
 
 Deserialize a plain object back into a FaultError instance.
 Requires a registry mapping names to error classes.

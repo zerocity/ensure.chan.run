@@ -6,7 +6,7 @@ kind: interface
 
 # MatchHandlers\<T\>
 
-Defined in: [src/types.ts:91](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/types.ts#L91)
+Defined in: [src/types.ts:91](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/types.ts#L91)
 
 Handler map for match(). Named keys match fault errors; _ is the fallback.
 
@@ -30,7 +30,7 @@ Handler map for match(). Named keys match fault errors; _ is the fallback.
 optional _?: (error) => T;
 ```
 
-Defined in: [src/types.ts:93](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/types.ts#L93)
+Defined in: [src/types.ts:93](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/types.ts#L93)
 
 #### Parameters
 

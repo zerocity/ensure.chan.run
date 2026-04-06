@@ -11,7 +11,7 @@ kind: function
 function trySync<TArgs, T, TErrors>(fn, ...args): SyncResult<T, InferFaultErrors<TErrors>>;
 ```
 
-Defined in: [src/try.ts:66](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/try.ts#L66)
+Defined in: [src/try.ts:66](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/try.ts#L66)
 
 Run sync code, return a discriminated result — never throws.
 
@@ -92,7 +92,7 @@ function getStoredTheme(): Theme | null {
 function trySync<T>(fn): SyncResult<T>;
 ```
 
-Defined in: [src/try.ts:74](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/try.ts#L74)
+Defined in: [src/try.ts:74](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/try.ts#L74)
 
 Run sync code, return a discriminated result — never throws.
 

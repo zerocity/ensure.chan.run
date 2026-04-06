@@ -11,7 +11,7 @@ kind: function
 function match<T>(error, handlers): T;
 ```
 
-Defined in: [src/match.ts:104](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/match.ts#L104)
+Defined in: [src/match.ts:104](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/match.ts#L104)
 
 Handle an error by matching against a handler map keyed by name or code.
 Fault errors are matched by name, then by code.
@@ -131,7 +131,7 @@ function match<TErrors, THandlers>(
 handlers): ReturnType<Extract<THandlers[keyof THandlers], (...args) => unknown>>;
 ```
 
-Defined in: [src/match.ts:105](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/match.ts#L105)
+Defined in: [src/match.ts:105](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/match.ts#L105)
 
 Handle an error by matching against a handler map keyed by name or code.
 Fault errors are matched by name, then by code.

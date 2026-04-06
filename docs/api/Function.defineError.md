@@ -9,7 +9,7 @@ kind: function
 function defineError<N>(name, options?): NamedFaultErrorClass<N>;
 ```
 
-Defined in: [src/define-error.ts:91](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/define-error.ts#L91)
+Defined in: [src/define-error.ts:91](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/define-error.ts#L91)
 
 Define a reusable typed error class.
 

@@ -6,7 +6,7 @@ kind: interface
 
 # NamedFaultErrorClass\<N\>
 
-Defined in: [src/types.ts:14](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/types.ts#L14)
+Defined in: [src/types.ts:14](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/types.ts#L14)
 
 Constructor for a FaultError class with a known name.
 
@@ -24,7 +24,7 @@ Constructor for a FaultError class with a known name.
 new NamedFaultErrorClass(message?, options?): NamedFaultError<N>;
 ```
 
-Defined in: [src/types.ts:15](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/types.ts#L15)
+Defined in: [src/types.ts:15](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/types.ts#L15)
 
 #### Parameters
 
@@ -46,4 +46,4 @@ Defined in: [src/types.ts:15](https://github.com/zerocity/ensure.chan.run/blob/5
 readonly prototype: NamedFaultError<N>;
 ```
 
-Defined in: [src/types.ts:16](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/types.ts#L16)
+Defined in: [src/types.ts:16](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/types.ts#L16)

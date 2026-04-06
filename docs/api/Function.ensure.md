@@ -13,7 +13,7 @@ function ensure<T>(
 options?): NonNullable<T>;
 ```
 
-Defined in: [src/ensure.ts:76](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/ensure.ts#L76)
+Defined in: [src/ensure.ts:76](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/ensure.ts#L76)
 
 Assert non-null/undefined. Returns the narrowed value or throws.
 

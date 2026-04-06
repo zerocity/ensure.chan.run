@@ -12,7 +12,7 @@ function fault(
    options?): never;
 ```
 
-Defined in: [src/fault.ts:68](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/fault.ts#L68)
+Defined in: [src/fault.ts:68](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/fault.ts#L68)
 
 Throw a typed error — from a class or an inline string code.
 

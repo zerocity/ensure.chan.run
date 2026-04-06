@@ -11,7 +11,7 @@ kind: function
 function tryAsync<TArgs, T, TErrors>(fn, ...args): Promise<AsyncResult<T, InferFaultErrors<TErrors>>>;
 ```
 
-Defined in: [src/try.ts:160](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/try.ts#L160)
+Defined in: [src/try.ts:160](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/try.ts#L160)
 
 Run async code, return a discriminated result — never rejects.
 
@@ -108,7 +108,7 @@ const config = JSON.parse(result.data);
 function tryAsync<T>(fn): Promise<AsyncResult<T>>;
 ```
 
-Defined in: [src/try.ts:168](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/try.ts#L168)
+Defined in: [src/try.ts:168](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/try.ts#L168)
 
 Run async code, return a discriminated result — never rejects.
 

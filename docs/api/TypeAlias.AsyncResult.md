@@ -18,7 +18,7 @@ type AsyncResult<T, E> =
 };
 ```
 
-Defined in: [src/types.ts:28](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/types.ts#L28)
+Defined in: [src/types.ts:28](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/types.ts#L28)
 
 Result of tryAsync — error type narrows when wrapping a declared function.
 

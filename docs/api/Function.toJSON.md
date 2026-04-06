@@ -9,7 +9,7 @@ kind: function
 function toJSON(error): FaultErrorJSON;
 ```
 
-Defined in: [src/serialize.ts:50](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/serialize.ts#L50)
+Defined in: [src/serialize.ts:50](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/serialize.ts#L50)
 
 Serialize a FaultError to a plain object for JSON transport (API responses, logs).
 

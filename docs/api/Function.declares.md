@@ -9,7 +9,7 @@ kind: function
 function declares<TArgs, TReturn, TErrors>(_errorClasses, fn): DeclaredFn<TArgs, TReturn, TErrors>;
 ```
 
-Defined in: [src/declares.ts:56](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/declares.ts#L56)
+Defined in: [src/declares.ts:56](https://github.com/zerocity/ensure.chan.run/blob/fd17b31e9ebff13cf02da88f3dcf89cf4e35edaf/src/declares.ts#L56)
 
 Annotate a function's error surface — purely type-level, zero runtime cost.
 
