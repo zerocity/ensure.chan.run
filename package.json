@@ -1,6 +1,7 @@
 {
   "name": "@chan.run/ensure",
   "version": "0.2.0",
+  "homepage": "https://www.chan.run/libraries/ensure",
   "description": "Type-safe errors without the boilerplate",
   "license": "MIT",
   "type": "module",
@@ -25,11 +26,15 @@
     "format": "biome format --write .",
     "format:check": "biome format .",
     "check": "pnpm run format:check && pnpm run lint && pnpm run test && pnpm run build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "docs:api": "node scripts/generate-api-docs.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.10",
     "tsdown": "0.21.7",
+    "typedoc": "0.28.18",
+    "typedoc-plugin-frontmatter": "1.3.1",
+    "typedoc-plugin-markdown": "4.11.0",
     "typescript": "6.0.2",
     "vitest": "4.1.2"
   },

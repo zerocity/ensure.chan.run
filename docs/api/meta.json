@@ -1,0 +1,33 @@
+{
+  "title": "API Reference",
+  "pages": [
+    "---Functions---",
+    "Function.ensure",
+    "Function.defineError",
+    "Function.fault",
+    "Function.match",
+    "Function.trySync",
+    "Function.tryAsync",
+    "Function.declares",
+    "Function.combines",
+    "Function.toJSON",
+    "Function.fromJSON",
+    "---Types---",
+    "TypeAlias.SyncResult",
+    "TypeAlias.AsyncResult",
+    "TypeAlias.FaultErrorClass",
+    "TypeAlias.DeclaredFn",
+    "TypeAlias.InferFaultErrors",
+    "TypeAlias.ErrorNames",
+    "TypeAlias.MergeErrors",
+    "TypeAlias.TypedMatchHandlers",
+    "---Interfaces---",
+    "Interface.FaultError",
+    "Interface.NamedFaultError",
+    "Interface.NamedFaultErrorClass",
+    "Interface.FaultErrorJSON",
+    "Interface.MatchHandlers",
+    "---Variables---",
+    "Variable.EnsureError"
+  ]
+}

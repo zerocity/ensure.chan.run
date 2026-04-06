@@ -1,0 +1,47 @@
+# Generate API Reference — runs on every push to main
+#
+# Runs typedoc to generate docs/api/ from source, commits if changed.
+# This ensures release tags always include fresh API documentation
+# that www.chan.run can consume via docs:fetch.
+
+name: Generate API Docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "typedoc.json"
+      - "typedoc-frontmatter.mjs"
+      - "scripts/generate-api-docs.mjs"
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: pnpm/action-setup@v5
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run docs:api
+
+      - name: Commit API docs if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/api/
+          git diff --staged --quiet && echo "No changes" || git commit -m "docs: regenerate API reference"
+          git push
