@@ -11,7 +11,7 @@ kind: function
 function tryAsync<TArgs, T, TErrors>(fn, ...args): Promise<AsyncResult<T, InferFaultErrors<TErrors>>>;
 ```
 
-Defined in: [src/try.ts:61](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/try.ts#L61)
+Defined in: [src/try.ts:160](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/try.ts#L160)
 
 Run async code, return a discriminated result — never rejects.
 
@@ -47,13 +47,68 @@ const result = await tryAsync(() => fetchUser(id));
 
 `Promise`\<[`AsyncResult`](TypeAlias.AsyncResult)\<`T`, [`InferFaultErrors`](TypeAlias.InferFaultErrors)\<`TErrors`\>\>\>
 
+### Examples
+
+```ts
+const result = await tryAsync(getUser, req.params.id);
+if (!result.ok) {
+  return match(result.error, [NotFoundError, DbError], {
+    NotFoundError: (e) => res.status(404).json({ error: e.message }),
+    DbError: () => res.status(503).json({ error: "Service unavailable" }),
+  });
+}
+res.json(result.data);
+```
+
+```ts
+const result = await tryAsync(() => fetch("https://api.example.com/data"));
+if (!result.ok) {
+  logger.error("API request failed", { error: result.error });
+  return fallbackData;
+}
+const data = await result.data.json();
+```
+
+```tsx
+async function UserPage({ id }: { id: string }) {
+  const result = await tryAsync(getUser, id);
+  if (!result.ok) return <ErrorCard error={result.error} />;
+  return <UserProfile user={result.data} />;
+}
+```
+
+```ts
+async function onSubmit(values: FormValues) {
+  const result = await tryAsync(() => api.post("/signup", values));
+  if (!result.ok) {
+    match(result.error, {
+      ValidationError: (e) => setFieldErrors(e.message),
+      _: () => toast.error("Something went wrong"),
+    });
+    return;
+  }
+  router.push("/dashboard");
+}
+```
+
+```ts
+import { readFile } from "node:fs/promises";
+
+const result = await tryAsync(() => readFile("./data.json", "utf-8"));
+if (!result.ok) {
+  console.error("Could not read file:", result.error);
+  process.exit(1);
+}
+const config = JSON.parse(result.data);
+```
+
 ## Call Signature
 
 ```ts
 function tryAsync<T>(fn): Promise<AsyncResult<T>>;
 ```
 
-Defined in: [src/try.ts:69](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/try.ts#L69)
+Defined in: [src/try.ts:168](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/try.ts#L168)
 
 Run async code, return a discriminated result — never rejects.
 
@@ -85,3 +140,58 @@ const result = await tryAsync(() => fetchUser(id));
 ### Returns
 
 `Promise`\<[`AsyncResult`](TypeAlias.AsyncResult)\<`T`\>\>
+
+### Examples
+
+```ts
+const result = await tryAsync(getUser, req.params.id);
+if (!result.ok) {
+  return match(result.error, [NotFoundError, DbError], {
+    NotFoundError: (e) => res.status(404).json({ error: e.message }),
+    DbError: () => res.status(503).json({ error: "Service unavailable" }),
+  });
+}
+res.json(result.data);
+```
+
+```ts
+const result = await tryAsync(() => fetch("https://api.example.com/data"));
+if (!result.ok) {
+  logger.error("API request failed", { error: result.error });
+  return fallbackData;
+}
+const data = await result.data.json();
+```
+
+```tsx
+async function UserPage({ id }: { id: string }) {
+  const result = await tryAsync(getUser, id);
+  if (!result.ok) return <ErrorCard error={result.error} />;
+  return <UserProfile user={result.data} />;
+}
+```
+
+```ts
+async function onSubmit(values: FormValues) {
+  const result = await tryAsync(() => api.post("/signup", values));
+  if (!result.ok) {
+    match(result.error, {
+      ValidationError: (e) => setFieldErrors(e.message),
+      _: () => toast.error("Something went wrong"),
+    });
+    return;
+  }
+  router.push("/dashboard");
+}
+```
+
+```ts
+import { readFile } from "node:fs/promises";
+
+const result = await tryAsync(() => readFile("./data.json", "utf-8"));
+if (!result.ok) {
+  console.error("Could not read file:", result.error);
+  process.exit(1);
+}
+const config = JSON.parse(result.data);
+```

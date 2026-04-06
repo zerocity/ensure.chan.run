@@ -9,7 +9,7 @@ kind: function
 function declares<TArgs, TReturn, TErrors>(_errorClasses, fn): DeclaredFn<TArgs, TReturn, TErrors>;
 ```
 
-Defined in: [src/declares.ts:13](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/declares.ts#L13)
+Defined in: [src/declares.ts:56](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/declares.ts#L56)
 
 Annotate a function's error surface — purely type-level, zero runtime cost.
 
@@ -38,3 +38,45 @@ const getUser = declares([NotFoundError, DatabaseError], async (id: string) => {
 ## Returns
 
 [`DeclaredFn`](TypeAlias.DeclaredFn)\<`TArgs`, `TReturn`, `TErrors`\>
+
+## Examples
+
+```ts
+const NotFoundError = defineError("NotFoundError");
+const DbError = defineError("DbError");
+
+const getUser = declares([NotFoundError, DbError], async (id: string) => {
+  const row = await db.users.findById(id);
+  return ensure(row, NotFoundError, `No user: ${id}`);
+});
+
+// Callers using tryAsync get typed errors automatically:
+const result = await tryAsync(getUser, "123");
+if (!result.ok) {
+  result.error; // NotFoundError | DbError — not unknown
+}
+```
+
+```ts
+const DbError = defineError("DbError");
+
+export const userRepo = {
+  findById: declares([DbError], async (id: string) => {
+    return await db.query("SELECT * FROM users WHERE id = $1", [id]);
+  }),
+  create: declares([DbError], async (data: CreateUser) => {
+    return await db.query("INSERT INTO users ...", [data.name, data.email]);
+  }),
+};
+```
+
+```ts
+const ApiError = defineError("ApiError");
+const TimeoutError = defineError("TimeoutError");
+
+const fetchProducts = declares([ApiError, TimeoutError], async (category: string) => {
+  const res = await fetch(`/api/products?category=${category}`);
+  if (!res.ok) fault(ApiError, `HTTP ${res.status}`);
+  return res.json() as Promise<Product[]>;
+});
+```

@@ -30,6 +30,63 @@ interface ErrorWithCaptureStackTrace {
  * const NotFoundError = defineError("NotFoundError");
  * const ValidationError = defineError("ValidationError", { code: "VALIDATION" });
  * ```
+ *
+ * @example Domain error catalog — one file, import everywhere
+ * ```ts
+ * // errors/auth.ts
+ * export const UnauthorizedError = defineError("UnauthorizedError");
+ * export const TokenExpiredError = defineError("TokenExpiredError");
+ * export const ForbiddenError = defineError("ForbiddenError");
+ *
+ * // errors/billing.ts
+ * export const PaymentFailedError = defineError("PaymentFailedError");
+ * export const QuotaExceededError = defineError("QuotaExceededError");
+ * ```
+ *
+ * @example Custom error code for API responses
+ * ```ts
+ * const RateLimitError = defineError("RateLimitError", { code: "RATE_LIMITED" });
+ *
+ * // In an API handler:
+ * // err.name  → "RateLimitError"  (for matching)
+ * // err.code  → "RATE_LIMITED"    (for API response payloads)
+ * ```
+ *
+ * @example Extending a base class
+ * ```ts
+ * class HttpError extends Error {
+ *   status = 500;
+ * }
+ *
+ * const NotFoundError = defineError("NotFoundError", { base: HttpError });
+ * const err = new NotFoundError("gone");
+ * err instanceof HttpError; // true
+ * err.status;               // 500
+ * ```
+ *
+ * @example Frontend — form validation errors
+ * ```ts
+ * const InvalidEmailError = defineError("InvalidEmailError", { code: "INVALID_EMAIL" });
+ * const RequiredFieldError = defineError("RequiredFieldError", { code: "REQUIRED" });
+ *
+ * function validateEmail(value: string) {
+ *   if (!value) fault(RequiredFieldError, "Email is required");
+ *   if (!value.includes("@")) fault(InvalidEmailError, "Not a valid email");
+ * }
+ * ```
+ *
+ * @example Errors are proper Error instances
+ * ```ts
+ * const DbError = defineError("DbError");
+ * const err = new DbError("connection lost");
+ *
+ * err instanceof Error;   // true
+ * err instanceof DbError;  // true
+ * err.name;                // "DbError"
+ * err.message;             // "connection lost"
+ * err.isFault;             // true
+ * err.stack;               // full stack trace
+ * ```
  */
 export function defineError<N extends string>(
   name: N,

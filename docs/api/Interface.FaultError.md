@@ -6,7 +6,7 @@ kind: interface
 
 # FaultError
 
-Defined in: [src/types.ts:2](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/types.ts#L2)
+Defined in: [src/types.ts:2](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/types.ts#L2)
 
 Marker interface for errors created by fault.
 
@@ -42,7 +42,7 @@ Error.cause
 readonly code: string;
 ```
 
-Defined in: [src/types.ts:4](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/types.ts#L4)
+Defined in: [src/types.ts:4](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/types.ts#L4)
 
 ***
 
@@ -52,7 +52,7 @@ Defined in: [src/types.ts:4](https://github.com/zerocity/ensure.chan.run/blob/47
 readonly isFault: true;
 ```
 
-Defined in: [src/types.ts:5](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/types.ts#L5)
+Defined in: [src/types.ts:5](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/types.ts#L5)
 
 ***
 
@@ -78,7 +78,7 @@ Error.message
 readonly name: string;
 ```
 
-Defined in: [src/types.ts:3](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/types.ts#L3)
+Defined in: [src/types.ts:3](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/types.ts#L3)
 
 #### Overrides
 

@@ -6,7 +6,7 @@ kind: interface
 
 # NamedFaultError\<N\>
 
-Defined in: [src/types.ts:9](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/types.ts#L9)
+Defined in: [src/types.ts:9](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/types.ts#L9)
 
 A fault error whose name is known at the type level.
 
@@ -42,7 +42,7 @@ Defined in: node\_modules/.pnpm/typescript@6.0.2/node\_modules/typescript/lib/li
 readonly code: string;
 ```
 
-Defined in: [src/types.ts:4](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/types.ts#L4)
+Defined in: [src/types.ts:4](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/types.ts#L4)
 
 #### Inherited from
 
@@ -56,7 +56,7 @@ Defined in: [src/types.ts:4](https://github.com/zerocity/ensure.chan.run/blob/47
 readonly isFault: true;
 ```
 
-Defined in: [src/types.ts:5](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/types.ts#L5)
+Defined in: [src/types.ts:5](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/types.ts#L5)
 
 #### Inherited from
 
@@ -84,7 +84,7 @@ Defined in: node\_modules/.pnpm/typescript@6.0.2/node\_modules/typescript/lib/li
 readonly name: N;
 ```
 
-Defined in: [src/types.ts:10](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/types.ts#L10)
+Defined in: [src/types.ts:10](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/types.ts#L10)
 
 #### Overrides
 

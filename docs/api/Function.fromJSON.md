@@ -9,7 +9,7 @@ kind: function
 function fromJSON(data, registry): Error;
 ```
 
-Defined in: [src/serialize.ts:44](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/serialize.ts#L44)
+Defined in: [src/serialize.ts:115](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/serialize.ts#L115)
 
 Deserialize a plain object back into a FaultError instance.
 Requires a registry mapping names to error classes.
@@ -32,3 +32,43 @@ Returns a generic Error if the name isn't in the registry.
 ## Returns
 
 `Error`
+
+## Examples
+
+```ts
+const registry = { ValidationError, NotFoundError, RateLimitError };
+
+async function apiCall(url: string) {
+  const res = await fetch(url);
+  if (!res.ok) {
+    const body = await res.json();
+    throw fromJSON(body.error, registry);
+    // Throws a real NotFoundError instance, matchable with match()
+  }
+  return res.json();
+}
+```
+
+```ts
+const registry = { PaymentFailedError, OrderError, DbError };
+
+queue.on("dead-letter", (msg) => {
+  const error = fromJSON(msg.error, registry);
+  match(error, {
+    PaymentFailedError: (e) => retryPayment(msg.orderId),
+    _: (e) => logger.error("Unrecoverable", { error: e }),
+  });
+});
+```
+
+```ts
+const json: FaultErrorJSON = {
+  name: "NotFoundError",
+  code: "NotFoundError",
+  message: "User not found",
+};
+const err = fromJSON(json, { NotFoundError });
+
+expect(err).toBeInstanceOf(NotFoundError);
+expect(err.message).toBe("User not found");
+```

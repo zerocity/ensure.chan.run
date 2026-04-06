@@ -11,7 +11,7 @@ kind: function
 function match<T>(error, handlers): T;
 ```
 
-Defined in: [src/match.ts:37](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/match.ts#L37)
+Defined in: [src/match.ts:104](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/match.ts#L104)
 
 Handle an error by matching against a handler map keyed by name or code.
 Fault errors are matched by name, then by code.
@@ -58,6 +58,70 @@ match(error, {
 
 `T`
 
+### Examples
+
+```ts
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  match(err, {
+    ValidationError: (e) => res.status(400).json({ error: e.message }),
+    UnauthorizedError: (e) => res.status(401).json({ error: "Unauthorized" }),
+    NotFoundError: (e) => res.status(404).json({ error: e.message }),
+    _: (e) => {
+      console.error("Unhandled error", e);
+      res.status(500).json({ error: "Internal server error" });
+    },
+  });
+});
+```
+
+```ts
+const result = await tryAsync(createOrder, userId, items);
+if (!result.ok) {
+  return match(result.error, [OutOfStockError, PaymentFailedError, DbError], {
+    OutOfStockError: (e) => Response.json({ error: e.message }, { status: 409 }),
+    PaymentFailedError: (e) => Response.json({ error: "Payment failed" }, { status: 402 }),
+    DbError: () => Response.json({ error: "Try again later" }, { status: 503 }),
+  });
+}
+```
+
+```tsx
+async function handleSubmit(data: FormData) {
+  const result = await tryAsync(submitForm, data);
+  if (!result.ok) {
+    match(result.error, {
+      ValidationError: (e) => toast.warning(e.message),
+      NetworkError: () => toast.error("Check your connection"),
+      _: () => toast.error("Something went wrong"),
+    });
+  }
+}
+```
+
+```ts
+const result = await tryAsync(() => fetch(url, { signal }));
+if (!result.ok) {
+  match(result.error, {
+    AbortError: () => console.log("Request cancelled"),
+    TypeError: (e) => console.error("Network failure:", e.message),
+    _: (e) => { throw e },
+  });
+}
+```
+
+```ts
+function reportError(error: unknown) {
+  match(error, {
+    ValidationError: (e) => metrics.increment("validation_error"),
+    DbError: (e) => {
+      logger.error("Database error", { message: e.message, code: e.code });
+      alertOncall("db-failure");
+    },
+    _: (e) => logger.warn("Unknown error", { error: e }),
+  });
+}
+```
+
 ## Call Signature
 
 ```ts
@@ -67,7 +131,7 @@ function match<TErrors, THandlers>(
 handlers): ReturnType<Extract<THandlers[keyof THandlers], (...args) => unknown>>;
 ```
 
-Defined in: [src/match.ts:38](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/match.ts#L38)
+Defined in: [src/match.ts:105](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/match.ts#L105)
 
 Handle an error by matching against a handler map keyed by name or code.
 Fault errors are matched by name, then by code.
@@ -115,3 +179,67 @@ match(error, {
 ### Returns
 
 `ReturnType`\<`Extract`\<`THandlers`\[keyof `THandlers`\], (...`args`) => `unknown`\>\>
+
+### Examples
+
+```ts
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  match(err, {
+    ValidationError: (e) => res.status(400).json({ error: e.message }),
+    UnauthorizedError: (e) => res.status(401).json({ error: "Unauthorized" }),
+    NotFoundError: (e) => res.status(404).json({ error: e.message }),
+    _: (e) => {
+      console.error("Unhandled error", e);
+      res.status(500).json({ error: "Internal server error" });
+    },
+  });
+});
+```
+
+```ts
+const result = await tryAsync(createOrder, userId, items);
+if (!result.ok) {
+  return match(result.error, [OutOfStockError, PaymentFailedError, DbError], {
+    OutOfStockError: (e) => Response.json({ error: e.message }, { status: 409 }),
+    PaymentFailedError: (e) => Response.json({ error: "Payment failed" }, { status: 402 }),
+    DbError: () => Response.json({ error: "Try again later" }, { status: 503 }),
+  });
+}
+```
+
+```tsx
+async function handleSubmit(data: FormData) {
+  const result = await tryAsync(submitForm, data);
+  if (!result.ok) {
+    match(result.error, {
+      ValidationError: (e) => toast.warning(e.message),
+      NetworkError: () => toast.error("Check your connection"),
+      _: () => toast.error("Something went wrong"),
+    });
+  }
+}
+```
+
+```ts
+const result = await tryAsync(() => fetch(url, { signal }));
+if (!result.ok) {
+  match(result.error, {
+    AbortError: () => console.log("Request cancelled"),
+    TypeError: (e) => console.error("Network failure:", e.message),
+    _: (e) => { throw e },
+  });
+}
+```
+
+```ts
+function reportError(error: unknown) {
+  match(error, {
+    ValidationError: (e) => metrics.increment("validation_error"),
+    DbError: (e) => {
+      logger.error("Database error", { message: e.message, code: e.code });
+      alertOncall("db-failure");
+    },
+    _: (e) => logger.warn("Unknown error", { error: e }),
+  });
+}
+```

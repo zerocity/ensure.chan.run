@@ -13,7 +13,7 @@ function ensure<T>(
 options?): NonNullable<T>;
 ```
 
-Defined in: [src/ensure.ts:25](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/ensure.ts#L25)
+Defined in: [src/ensure.ts:76](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/ensure.ts#L76)
 
 Assert non-null/undefined. Returns the narrowed value or throws.
 
@@ -48,3 +48,50 @@ const user = ensure(db.find(id), "Could not find user");
 ## Returns
 
 `NonNullable`\<`T`\>
+
+## Examples
+
+```ts
+import { ensure, defineError } from "@chan.run/ensure";
+
+const UserNotFoundError = defineError("UserNotFoundError");
+
+async function getUser(id: string) {
+  const row = await db.users.findUnique({ where: { id } });
+  return ensure(row, UserNotFoundError, `No user with id ${id}`);
+}
+```
+
+```ts
+const databaseUrl = ensure(process.env.DATABASE_URL, "DATABASE_URL is required");
+const apiKey = ensure(process.env.API_KEY, "API_KEY is required");
+```
+
+```ts
+app.get("/users/:id", (req, res) => {
+  const id = ensure(req.params.id, ValidationError, "Missing user ID");
+  // id is narrowed to string, never undefined
+});
+```
+
+```tsx
+function UserProfile({ userId }: { userId: string }) {
+  const { data } = useQuery(["user", userId], () => fetchUser(userId));
+  const user = ensure(data, "User data not loaded");
+
+  return <h1>{user.name}</h1>;
+}
+```
+
+```ts
+const params = new URLSearchParams(window.location.search);
+const token = ensure(params.get("token"), "Missing token in URL");
+```
+
+```ts
+try {
+  await connectToDatabase();
+} catch (err) {
+  ensure(null, DbError, "Connection failed", { cause: err });
+}
+```

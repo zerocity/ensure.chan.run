@@ -10,7 +10,7 @@ kind: type
 type ErrorNames<TErrors> = TErrors[number] extends NamedFaultErrorClass<infer N> ? N : never;
 ```
 
-Defined in: [src/types.ts:49](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/types.ts#L49)
+Defined in: [src/types.ts:49](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/types.ts#L49)
 
 Extract the name string literals from a tuple of error classes.
 

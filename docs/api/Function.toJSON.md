@@ -9,7 +9,7 @@ kind: function
 function toJSON(error): FaultErrorJSON;
 ```
 
-Defined in: [src/serialize.ts:20](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/serialize.ts#L20)
+Defined in: [src/serialize.ts:50](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/serialize.ts#L50)
 
 Serialize a FaultError to a plain object for JSON transport (API responses, logs).
 
@@ -28,3 +28,32 @@ const json = toJSON(err);
 ## Returns
 
 [`FaultErrorJSON`](Interface.FaultErrorJSON)
+
+## Examples
+
+```ts
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof Error && "isFault" in err) {
+    res.status(400).json({ error: toJSON(err as FaultError) });
+  } else {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+```
+
+```ts
+const result = await tryAsync(processPayment, orderId);
+if (!result.ok && result.error instanceof Error && "isFault" in result.error) {
+  logger.error("Payment failed", toJSON(result.error as FaultError));
+  // { name: "PaymentFailedError", code: "PAYMENT_FAILED", message: "Card declined" }
+}
+```
+
+```ts
+// Service A — sends error over HTTP
+const err = new ValidationError("Email already taken");
+await fetch("https://service-b/webhook", {
+  method: "POST",
+  body: JSON.stringify({ event: "error", payload: toJSON(err) }),
+});
+```

@@ -9,7 +9,7 @@ kind: function
 function combines<TArgs, TReturn, TFns>(_sources, fn): DeclaredFn<TArgs, TReturn, MergeErrors<TFns>>;
 ```
 
-Defined in: [src/declares.ts:43](https://github.com/zerocity/ensure.chan.run/blob/47ca8d97d3dead4220597e51a37f7aa5f4211c59/src/declares.ts#L43)
+Defined in: [src/declares.ts:123](https://github.com/zerocity/ensure.chan.run/blob/5454a2bc1f77b0499a10d4821a05e8703c6a9a22/src/declares.ts#L123)
 
 Compose error surfaces from multiple declared functions into one.
 Use when a function calls several declared functions and can throw any of their errors.
@@ -47,3 +47,40 @@ const getUserOrder = combines(
 ## Returns
 
 [`DeclaredFn`](TypeAlias.DeclaredFn)\<`TArgs`, `TReturn`, [`MergeErrors`](TypeAlias.MergeErrors)\<`TFns`\>\>
+
+## Examples
+
+```ts
+const getUser = declares([UserNotFoundError, DbError], ...);
+const getBilling = declares([BillingError, DbError], ...);
+const getPermissions = declares([AuthError], ...);
+
+const getDashboard = combines(
+  [getUser, getBilling, getPermissions],
+  async (userId: string) => {
+    const [user, billing, perms] = await Promise.all([
+      getUser(userId),
+      getBilling(userId),
+      getPermissions(userId),
+    ]);
+    return { user, billing, perms };
+  },
+);
+
+// Error type is UserNotFoundError | DbError | BillingError | AuthError
+const result = await tryAsync(getDashboard, userId);
+```
+
+```ts
+const findUser = declares([DbError], ...);
+const validateToken = declares([AuthError, TokenExpiredError], ...);
+
+const authenticateUser = combines(
+  [findUser, validateToken],
+  async (token: string) => {
+    const claims = validateToken(token);
+    return findUser(claims.userId);
+  },
+);
+// authenticateUser throws DbError | AuthError | TokenExpiredError
+```
