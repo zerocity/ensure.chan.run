@@ -72,6 +72,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Update Context7 documentation
-        uses: rennf93/upsert-context7@v1
+        uses: rennf93/upsert-context7@1.1
         with:
           operation: refresh
