@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.10/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.12/schema.json",
   "assist": {
     "actions": {
       "source": {
@@ -18,6 +18,11 @@
     "indentStyle": "space"
   },
   "files": {
-    "includes": ["src/**", "tests/**", "*.ts", "*.json"]
+    "includes": [
+      "src/**",
+      "tests/**",
+      "*.ts",
+      "*.json"
+    ]
   }
 }
